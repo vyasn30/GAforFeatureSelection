@@ -4,10 +4,10 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
-from genetic_selection import GeneticSelectionCV
 from featureFinder import find
 from sklearn.model_selection import cross_val_score
-
+from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import GaussianNB
 
 df = pd.read_csv("data/heart_failure_clinical_records_dataset.csv")
 total_feats = list(df.columns)
@@ -54,9 +54,13 @@ y = df[target]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state= 46)
 
-clf = RandomForestClassifier(max_depth = 3)
+clf = GaussianNB()
+
+clf.fit(X_train, y_train)
+
 rskf = RepeatedStratifiedKFold(n_repeats = 10, n_splits = 10)
 X_prime = df[new]; y_prime = df.iloc[:,-1]
 print(np.mean(cross_val_score(clf, X_prime, y_prime, cv = rskf, scoring = "roc_auc")))
 
+y_pred = clf.predict(X_test)
 
